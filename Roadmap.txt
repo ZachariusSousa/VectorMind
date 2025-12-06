@@ -1,0 +1,139 @@
+Project Roadmap
+===============
+
+Overview
+--------
+This document outlines the development roadmap for a local LLM-based project assistant.
+The goal is to create a system that can be pointed to any directory (such as a Unity or software project),
+automatically index and vectorize its contents, and provide context-aware assistance through retrieval-augmented generation (RAG).
+
+The roadmap is divided into milestones that reflect functional maturity, stability, and long-term applicability.
+
+-----------------------------------------
+Milestone 0: Foundation and Environment
+-----------------------------------------
+- Set up core development environment.
+- Select local LLM runtime (Ollama recommended for MVP).
+- Select embedding model for local inference (e.g., BGE-base or BGE-M3).
+- Initialize project repository structure.
+- Add basic documentation and licensing.
+
+Deliverables:
+- Project structure scaffold.
+- Working Ollama integration test.
+- Initial ROADMAP and README.
+
+-----------------------------------------
+Milestone 1: Directory Indexing MVP
+-----------------------------------------
+- Implement directory crawler capable of reading all supported text-based file formats.
+- Implement file loaders with filtering by extension.
+- Implement basic line-based chunking for code and documentation files.
+- Implement embedding pipeline for chunks.
+- Initialize local vector database (ChromaDB or equivalent).
+- Implement upsert logic for storing document embeddings and metadata.
+
+Deliverables:
+- Indexing script capable of processing an entire directory.
+- Stored embeddings with file paths and chunk metadata.
+
+-----------------------------------------
+Milestone 2: Retrieval and Query Engine
+-----------------------------------------
+- Implement query embedding.
+- Implement vector search against indexed project data.
+- Implement context assembly and prompt construction.
+- Integrate with a local LLM via HTTP API.
+- Return structured responses including referenced file paths.
+
+Deliverables:
+- API endpoint for retrieval-augmented chat.
+- Documented prompt format and retrieval process.
+
+-----------------------------------------
+Milestone 3: Backend API (FastAPI)
+-----------------------------------------
+- Create FastAPI application with endpoints:
+  - /index (POST): index a directory.
+  - /chat (POST): query the project assistant.
+- Add request and response models.
+- Add logging to track indexing and retrieval operations.
+- Add basic error handling (missing folder, unreadable files, empty query, etc.).
+
+Deliverables:
+- Fully functional backend service.
+- OpenAPI documentation automatically generated.
+
+-----------------------------------------
+Milestone 4: Basic Frontend Interface
+-----------------------------------------
+- Implement a minimal React-based interface.
+- Allow the user to specify a folder path for indexing.
+- Provide a chat interface for sending queries and receiving responses.
+- Display file references retrieved during RAG for transparency.
+
+Deliverables:
+- Usable web-based UI for interacting with the project assistant.
+
+-----------------------------------------
+Milestone 5: Project-Aware Enhancements
+-----------------------------------------
+- Improve chunking using language-aware parsing where applicable.
+- Optional integration with tree-sitter for structural code segmentation.
+- Add support for framework-specific metadata extraction (e.g., Unity components, JSON configurations).
+- Improve prompt generation to include richer metadata (file path, line ranges, symbols).
+
+Deliverables:
+- More accurate retrieval for complex codebases.
+- Better grounding for LLM responses.
+
+-----------------------------------------
+Milestone 6: Performance and Stability
+-----------------------------------------
+- Add caching for embeddings to avoid reprocessing unchanged files.
+- Optimize batch embedding workflows.
+- Add incremental indexing (detecting modified or deleted files).
+- Improve vector store configuration for faster queries.
+
+Deliverables:
+- Faster indexing.
+- More responsive retrieval for large projects.
+
+-----------------------------------------
+Milestone 7: Developer Experience and Tooling
+-----------------------------------------
+- Add CLI interface for indexing and querying without the web UI.
+- Provide a configuration file for model selection, chunk sizes, and vector store settings.
+- Add logging, error reporting, and optional debug mode.
+- Create usage examples and sample datasets.
+- Begin preparing public documentation for the project.
+
+Deliverables:
+- Developer-focused tools.
+- Configurable and maintainable system.
+
+-----------------------------------------
+Milestone 8: Optional Extensions (Long-Term)
+-----------------------------------------
+- Build a VSCode or JetBrains plugin that communicates with the backend API.
+- Implement project understanding features such as dependency graphs or symbol search.
+- Add support for non-text assets via metadata extraction (e.g., Unity prefabs).
+- Explore local fine-tuning or LoRA adapters for project-specific reasoning.
+- Add multi-user or multi-project support through separate vector collections.
+
+Deliverables:
+- Plugins and advanced tooling.
+- Enhanced reasoning for domain-specific projects.
+
+-----------------------------------------
+Milestone 9: Release Preparation
+-----------------------------------------
+- Finalize documentation.
+- Provide installation and setup guides.
+- Add contribution guidelines.
+- Tag initial stable release (v1.0.0).
+
+Deliverables:
+- Public-ready repository.
+- Stable versioned release.
+
