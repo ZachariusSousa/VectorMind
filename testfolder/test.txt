@@ -1,0 +1,1 @@
+The enemy AI moves using NavMesh in EnemyController.cs.
