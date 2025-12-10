@@ -2,6 +2,7 @@ import os
 from typing import List, Tuple
 from .db import get_collection
 from .ollama_client import embed_texts_ollama
+from .config import EMBEDDING_BATCH_SIZE
 
 # can add .shader, .uxml, etc. for Unity later
 TEXT_EXTS = {
@@ -44,9 +45,9 @@ def ingest_directory(root: str, collection_name: str = "default"):
     coll = get_collection(collection_name)
     docs = read_text_files(root)
 
-    ids = []
-    contents = []
-    metadatas = []
+    ids: List[str] = []
+    contents: List[str] = []
+    metadatas: List[dict] = []
 
     for path, text in docs:
         chunks = chunk_text(text)
@@ -65,7 +66,43 @@ def ingest_directory(root: str, collection_name: str = "default"):
         print("No files/chunks found to index.")
         return
 
-    print(f"Embedding {len(contents)} chunks with Ollama...")
-    embeddings = embed_texts_ollama(contents)
-    coll.add(ids=ids, embeddings=embeddings, documents=contents, metadatas=metadatas)
+    total = len(contents)
+    print(
+        f"Embedding {total} chunks with Ollama "
+        f"(batch size={EMBEDDING_BATCH_SIZE})..."
+    )
+
+    batch_size = max(1, EMBEDDING_BATCH_SIZE)
+    for start in range(0, total, batch_size):
+        end = min(start + batch_size, total)
+        batch_ids = ids[start:end]
+        batch_contents = contents[start:end]
+        batch_metadatas = metadatas[start:end]
+
+        try:
+            embeddings = embed_texts_ollama(batch_contents)
+        except Exception as e:
+            print(
+                f"Error embedding batch {start}-{end} "
+                f"({len(batch_contents)} chunks): {e}"
+            )
+            # Optionally: continue to next batch instead of aborting everything
+            raise
+
+        if len(embeddings) != len(batch_contents):
+            print(
+                f"Warning: embeddings count ({len(embeddings)}) "
+                f"!= contents count ({len(batch_contents)}) for batch {start}-{end}"
+            )
+
+        coll.add(
+            ids=batch_ids,
+            embeddings=embeddings,
+            documents=batch_contents,
+            metadatas=batch_metadatas,
+        )
+
+        print(f"  Indexed chunks {start + 1}–{end} / {total}")
+
     print("Done. Index saved.")
+
