@@ -7,4 +7,10 @@ if __name__ == "__main__":
     parser.add_argument("--collection", default="default", help="Collection name")
     args = parser.parse_args()
 
-    print(answer(args.question, args.collection))
+    try:
+        result = answer(args.question, args.collection)
+    except Exception as e:
+        print(f"Fatal error while answering query: {e}")
+    else:
+        print(result)
+
