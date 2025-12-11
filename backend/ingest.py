@@ -121,7 +121,6 @@ def ingest_directory(root: str, collection_name: str = "default"):
     # --- Step 1: inspect existing index for this collection ---
     print(f"Loading existing index metadata from collection '{collection_name}'...")
     try:
-        # 'ids' are always returned, so we only request metadatas explicitly
         existing = coll.get(include=["metadatas"])
     except Exception as e:
         print(f"Warning: failed to load existing collection data: {e}")
@@ -273,8 +272,7 @@ def ingest_directory(root: str, collection_name: str = "default"):
                 f"Error embedding batch {start}-{end} "
                 f"({len(batch_contents)} chunks): {e}"
             )
-            # You can choose to continue on error instead of aborting:
-            # continue
+            # continue instead of abborting entire ingest
             raise
 
         if len(embeddings) != len(batch_contents):
